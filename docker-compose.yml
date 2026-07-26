@@ -18,4 +18,5 @@ services:
 volumes:
   postgres_data:
 
-networks: twitch-clone-backend
+networks:
+  twitch-clone-backend:
