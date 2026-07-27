@@ -71,6 +71,11 @@ export class VerificationService {
       true
     );
 
+    await this.mailService.sendVerificationToken(
+      user.email,
+      verificationToken.token
+    );
+
     return true;
   }
 }
