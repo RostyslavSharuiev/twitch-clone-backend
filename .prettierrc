@@ -4,10 +4,12 @@
 
   "semi": true,
   "singleQuote": true,
+  "jsxSingleQuote": true,
   "bracketSameLine": true,
 
   "arrowParens": "always",
   "trailingComma": "es5",
+  "singleAttributePerLine": true,
 
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true,
