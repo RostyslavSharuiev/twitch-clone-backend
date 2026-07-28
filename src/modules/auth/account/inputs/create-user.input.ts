@@ -7,6 +7,8 @@ import {
   MinLength,
 } from 'class-validator';
 
+import { MIN_PASSWORD_LENGTH } from '@/src/shared/constants/constants';
+
 @InputType()
 export class CreateUserInput {
   @Field()
@@ -24,6 +26,6 @@ export class CreateUserInput {
   @Field()
   @IsString()
   @IsNotEmpty()
-  @MinLength(8)
+  @MinLength(MIN_PASSWORD_LENGTH)
   public password!: string;
 }
