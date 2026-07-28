@@ -132,8 +132,9 @@ export class SessionService {
     }
 
     const metadata = getSessionMetadata(req, userAgent);
+    const savedUser = await saveSession(req, user, metadata);
 
-    return saveSession(req, user, metadata);
+    return { user: savedUser };
   }
 
   public async logout(req: Request) {
