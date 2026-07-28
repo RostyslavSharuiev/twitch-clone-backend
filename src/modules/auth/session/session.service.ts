@@ -8,6 +8,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { verify } from 'argon2';
 import type { Request } from 'express';
+import { TOTP } from 'otpauth';
 
 import { PrismaService } from '@/src/core/prisma/prisma.service';
 import { RedisService } from '@/src/core/redis/redis.service';
@@ -88,7 +89,7 @@ export class SessionService {
   }
 
   public async login(req: Request, input: LoginInput, userAgent: string) {
-    const { login, password } = input;
+    const { login, password, pin } = input;
 
     const user = await this.prismaService.user.findFirst({
       where: {
@@ -112,9 +113,28 @@ export class SessionService {
       );
     }
 
-    const metadata = getSessionMetadata(req, userAgent);
+    if (user.isTotpEnabled) {
+      if (!pin) {
+        return { message: 'Pin code required for authorization' };
+      }
 
-    return saveSession(req, user, metadata);
+      const totp = new TOTP({
+        issuer: 'TwitchClone',
+        label: `${user.email}`,
+        algorithm: 'SHA1',
+        digits: 6,
+        secret: String(user.totpSecret),
+      });
+
+      const delta = totp.validate({ token: pin });
+
+      if (delta === null) throw new BadRequestException('Wrong code');
+    }
+
+    const metadata = getSessionMetadata(req, userAgent);
+    const savedUser = await saveSession(req, user, metadata);
+
+    return { user: savedUser };
   }
 
   public async logout(req: Request) {
