@@ -9,11 +9,11 @@ export function getMailerConfig(configService: ConfigService): MailerOptions {
       secure: false,
       auth: {
         user: configService.getOrThrow<string>('MAIL_LOGIN'),
-        password: configService.getOrThrow<string>('MAIL_PASSWORD'),
+        pass: configService.getOrThrow<string>('MAIL_PASSWORD'),
       },
     },
     defaults: {
-      from: `"TWITCH CLONE" ${configService.getOrThrow<string>('MAIL_LOGIN')}`,
+      from: `"TWITCH CLONE" <${configService.getOrThrow<string>('MAIL_LOGIN')}>`,
     },
   };
 }
