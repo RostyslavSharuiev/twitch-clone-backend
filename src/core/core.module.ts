@@ -13,6 +13,7 @@ import { VerificationModule } from '@/src/modules/auth/verification/verification
 import { CronModule } from '@/src/modules/cron/cron.module';
 import { MailModule } from '@/src/modules/libs/mail/mail.module';
 import { StorageModule } from '@/src/modules/libs/storage/storage.module';
+import { StreamModule } from '@/src/modules/stream/stream.module';
 import { IS_DEV_ENV } from '@/src/shared/utils/is-dev/is-dev.util';
 
 import { getGraphQLConfig } from './config/graphql.config';
@@ -43,6 +44,7 @@ import { RedisModule } from './redis/redis.module';
     PasswordRecoveryModule,
     TotpModule,
     DeactivateModule,
+    StreamModule,
   ],
 })
 export class CoreModule {}
