@@ -1,6 +1,12 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 import Upload from 'graphql-upload/Upload.mjs';
+import { AccessToken } from 'livekit-server-sdk';
 import sharp from 'sharp';
 
 import { PrismaService } from '@/src/core/prisma/prisma.service';
@@ -13,11 +19,13 @@ import {
 import { StorageService } from './../libs/storage/storage.service';
 import { ChangeStreamInfoInput } from './inputs/change-stream-info.input';
 import { FiltersInput } from './inputs/filters.input';
+import { GenerateStreamTokenInput } from './inputs/generate-stream-token.input';
 
 @Injectable()
 export class StreamService {
   public constructor(
     private readonly prismaService: PrismaService,
+    private readonly configService: ConfigService,
     private readonly storageService: StorageService
   ) {}
 
@@ -164,6 +172,59 @@ export class StreamService {
     });
 
     return true;
+  }
+
+  public async generateToken(input: GenerateStreamTokenInput) {
+    const { userId, chanelId } = input;
+
+    let self: { id: string; username: string };
+
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (user) {
+      self = {
+        id: user.id,
+        username: user.username,
+      };
+    } else {
+      self = {
+        id: userId,
+        username: `Watcher ${Math.floor(Math.random() * 100_000)}`,
+      };
+    }
+
+    const chanel = await this.prismaService.user.findUnique({
+      where: {
+        id: chanelId,
+      },
+    });
+
+    if (!chanel) {
+      throw new NotFoundException('Chanel not found');
+    }
+
+    const isHost = self.id === chanel.id;
+
+    const token = new AccessToken(
+      this.configService.getOrThrow<string>('LIVEKIT_API_KEY'),
+      this.configService.getOrThrow<string>('LIVEKIT_API_SECRET'),
+      {
+        identity: isHost ? `Host-${self.id}` : self.id,
+        name: self.username,
+      }
+    );
+
+    token.addGrant({
+      room: chanel.id,
+      roomJoin: true,
+      canPublish: false,
+    });
+
+    return { token: token.toJwt() };
   }
 
   private findBySearchTermFilter(searchTerm: string): Prisma.StreamWhereInput {

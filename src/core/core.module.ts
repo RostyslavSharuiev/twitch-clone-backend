@@ -16,6 +16,7 @@ import { MailModule } from '@/src/modules/libs/mail/mail.module';
 import { StorageModule } from '@/src/modules/libs/storage/storage.module';
 import { IngressModule } from '@/src/modules/stream/ingress/ingress.module';
 import { StreamModule } from '@/src/modules/stream/stream.module';
+import { WebhookModule } from '@/src/modules/webhook/webhook.module';
 import { IS_DEV_ENV } from '@/src/shared/utils/is-dev/is-dev.util';
 
 import { getGraphQLConfig } from './config/graphql.config';
@@ -55,6 +56,7 @@ import { RedisModule } from './redis/redis.module';
     DeactivateModule,
     StreamModule,
     IngressModule,
+    WebhookModule,
   ],
 })
 export class CoreModule {}
