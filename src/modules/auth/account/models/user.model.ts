@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 
 import type { User } from '@/src/generated/prisma/client';
+import { SocialLinkModel } from '@/src/modules/auth/profile/models/social-link.model';
 
 @ObjectType()
 export class UserModel implements User {
@@ -48,4 +49,7 @@ export class UserModel implements User {
 
   @Field(() => Date, { nullable: true })
   public deactivateAt!: Date | null;
+
+  @Field(() => [SocialLinkModel])
+  public socialLinks!: SocialLinkModel[];
 }
