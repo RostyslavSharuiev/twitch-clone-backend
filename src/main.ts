@@ -5,6 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { RedisStore } from 'connect-redis';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
+import graphqlUploadExpress from 'graphql-upload/graphqlUploadExpress.mjs';
 
 import { ms, type StringValue } from '@/src/shared/utils/ms/ms.util';
 import { parseBoolean } from '@/src/shared/utils/parse-boolean/parse-boolean.util';
@@ -20,6 +21,10 @@ async function bootstrap() {
   app.use(cookieParser(config.getOrThrow<string>('COOKIES_SECRET')));
 
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
+  app.use(
+    config.getOrThrow<'string'>('GRAPHQL_PREFIX'),
+    graphqlUploadExpress()
+  );
 
   app.use(
     session({
