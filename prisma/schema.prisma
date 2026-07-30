@@ -29,9 +29,25 @@ model User {
   isDeactivated Boolean   @default(false) @map("is_deactivated")
   deactivateAt  DateTime? @map("deactivate_at")
 
-  tokens Token[]
+  tokens      Token[]
+  socialLinks SocialLink[]
 
   @@map("users")
+}
+
+model SocialLink {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  title    String
+  url      String
+  position Int
+
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String? @map("user_id")
+
+  @@map("social_links")
 }
 
 model Token {
