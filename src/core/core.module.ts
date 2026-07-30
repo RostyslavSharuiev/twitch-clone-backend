@@ -11,12 +11,15 @@ import { SessionModule } from '@/src/modules/auth/session/session.module';
 import { TotpModule } from '@/src/modules/auth/totp/totp.module';
 import { VerificationModule } from '@/src/modules/auth/verification/verification.module';
 import { CronModule } from '@/src/modules/cron/cron.module';
+import { LivekitModule } from '@/src/modules/libs/livekit/livekit.module';
 import { MailModule } from '@/src/modules/libs/mail/mail.module';
 import { StorageModule } from '@/src/modules/libs/storage/storage.module';
+import { IngressModule } from '@/src/modules/stream/ingress/ingress.module';
 import { StreamModule } from '@/src/modules/stream/stream.module';
 import { IS_DEV_ENV } from '@/src/shared/utils/is-dev/is-dev.util';
 
 import { getGraphQLConfig } from './config/graphql.config';
+import { getLiveKitConfig } from './config/livekit.config';
 import { PrismaModule } from './prisma/prisma.module';
 import { RedisModule } from './redis/redis.module';
 
@@ -32,11 +35,17 @@ import { RedisModule } from './redis/redis.module';
       useFactory: getGraphQLConfig,
       inject: [ConfigService],
     }),
+    LivekitModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: getLiveKitConfig,
+      inject: [ConfigService],
+    }),
     PrismaModule,
     RedisModule,
     MailModule,
     CronModule,
     StorageModule,
+    LivekitModule,
     AccountModule,
     SessionModule,
     ProfileModule,
@@ -45,6 +54,7 @@ import { RedisModule } from './redis/redis.module';
     TotpModule,
     DeactivateModule,
     StreamModule,
+    IngressModule,
   ],
 })
 export class CoreModule {}
