@@ -7,4 +7,9 @@ export class ChangeStreamInfoInput {
   @IsString()
   @IsNotEmpty()
   public title!: string;
+
+  @Field(() => String)
+  @IsString()
+  @IsNotEmpty()
+  public categoryId!: string;
 }
