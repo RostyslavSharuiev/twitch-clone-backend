@@ -8,7 +8,7 @@ import { getRawBody } from 'raw-body';
 
 @Injectable()
 export class RawBodyMiddleware implements NestMiddleware {
-  public use(req: Request, res: Response, next: NextFunction) {
+  public use(req: Request, _res: Response, next: NextFunction) {
     if (!req.readable) {
       return next(new BadRequestException('Invalid request'));
     }
@@ -18,8 +18,11 @@ export class RawBodyMiddleware implements NestMiddleware {
         req.body = rawBody;
         next();
       })
-      .catch((error) => {
-        throw new BadRequestException('Receive error', error);
+      .catch((error: unknown) => {
+        throw new BadRequestException(
+          'Receive error',
+          error instanceof Error ? error.message : String(error)
+        );
       });
   }
 }

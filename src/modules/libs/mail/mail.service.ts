@@ -54,7 +54,11 @@ export class MailService {
     return this.sendMail(email, 'Account has been deleted', html);
   }
 
-  private sendMail(email: string, subject: string, html: string) {
+  private sendMail(
+    email: string,
+    subject: string,
+    html: string
+  ): Promise<unknown> {
     return this.mailerService.sendMail({
       to: email,
       subject,

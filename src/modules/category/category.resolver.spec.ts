@@ -8,7 +8,17 @@ describe('CategoryResolver', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [CategoryResolver, CategoryService],
+      providers: [
+        CategoryResolver,
+        {
+          provide: CategoryService,
+          useValue: {
+            findAll: jest.fn(),
+            findRandom: jest.fn(),
+            findBySlug: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     resolver = module.get<CategoryResolver>(CategoryResolver);

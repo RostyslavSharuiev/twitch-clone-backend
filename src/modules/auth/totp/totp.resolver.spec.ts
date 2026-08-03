@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { TotpResolver } from './totp.resolver';
 import { TotpService } from './totp.service';
 
@@ -7,7 +8,17 @@ describe('TotpResolver', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TotpResolver, TotpService],
+      providers: [
+        TotpResolver,
+        {
+          provide: TotpService,
+          useValue: {
+            generate: jest.fn(),
+            enable: jest.fn(),
+            disable: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     resolver = module.get<TotpResolver>(TotpResolver);

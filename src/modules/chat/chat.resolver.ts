@@ -40,10 +40,12 @@ export class ChatResolver {
 
   @Subscription(() => ChatMessageModel, {
     name: 'chatMessageAdded',
-    filter: (payload, variables) =>
-      payload.chatMessageAdded.streamId === variables.streamId,
+    filter: (
+      payload: { chatMessageAdded: ChatMessageModel },
+      variables: { streamId: string }
+    ) => payload.chatMessageAdded.streamId === variables.streamId,
   })
-  public chatMessageAdded(@Args('streamId') streamId: string) {
+  public chatMessageAdded() {
     return this.pubSub.asyncIterableIterator('CHAT_MESSAGE_ADDED');
   }
 

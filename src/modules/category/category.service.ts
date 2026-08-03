@@ -33,7 +33,7 @@ export class CategoryService {
       randomIndexList.add(randomIndex);
     }
 
-    const categoryList = this.prismaService.category.findMany({
+    const categoryList = await this.prismaService.category.findMany({
       include: {
         streams: {
           include: {

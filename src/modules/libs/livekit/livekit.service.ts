@@ -49,6 +49,7 @@ export class LivekitService {
         const value = obj[prop as keyof T];
 
         if (typeof value === 'function') {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-return
           return value.bind(obj);
         }
 

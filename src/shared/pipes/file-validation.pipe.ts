@@ -15,16 +15,27 @@ import {
   validateFileSize,
 } from '@/src/shared/utils/file/file.util';
 
+interface FileUpload {
+  filename: string;
+  mimetype: string;
+  encoding: string;
+  createReadStream: () => ReadStream;
+}
+
 @Injectable()
 export class FileValidationPipe implements PipeTransform {
-  public async transform(value: any, metadata: ArgumentMetadata) {
+  public async transform(
+    value: FileUpload,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _metadata: ArgumentMetadata
+  ): Promise<FileUpload> {
     if (!value?.filename) {
       throw new BadRequestException('File was not uploaded');
     }
 
     const { filename, createReadStream } = value;
 
-    const fileStream = createReadStream() as ReadStream;
+    const fileStream = createReadStream();
 
     const isFileFormatValid = validateFileFormat(
       filename,
