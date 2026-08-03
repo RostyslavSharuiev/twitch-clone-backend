@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { StreamResolver } from './stream.resolver';
 import { StreamService } from './stream.service';
 
@@ -7,7 +8,20 @@ describe('StreamResolver', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [StreamResolver, StreamService],
+      providers: [
+        StreamResolver,
+        {
+          provide: StreamService,
+          useValue: {
+            findAll: jest.fn(),
+            findRandom: jest.fn(),
+            changeInfo: jest.fn(),
+            changeThumbnail: jest.fn(),
+            removeThumbnail: jest.fn(),
+            generateToken: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     resolver = module.get<StreamResolver>(StreamResolver);

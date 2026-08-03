@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { IngressResolver } from './ingress.resolver';
 import { IngressService } from './ingress.service';
 
@@ -7,7 +8,10 @@ describe('IngressResolver', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [IngressResolver, IngressService],
+      providers: [
+        IngressResolver,
+        { provide: IngressService, useValue: { create: jest.fn() } },
+      ],
     }).compile();
 
     resolver = module.get<IngressResolver>(IngressResolver);
