@@ -28,5 +28,8 @@
     "noFallthroughCasesInSwitch": false,
     "types": ["jest", "node"],
     "jsx": "react"
+  },
+  "ts-node": {
+    "experimentalResolver": true
   }
 }
