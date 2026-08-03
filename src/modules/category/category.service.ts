@@ -11,6 +11,14 @@ export class CategoryService {
       where: {
         createdAt: 'desc',
       },
+      include: {
+        streams: {
+          include: {
+            user: true,
+            category: true,
+          },
+        },
+      },
     });
   }
 
@@ -26,6 +34,14 @@ export class CategoryService {
     }
 
     const categoryList = this.prismaService.category.findMany({
+      include: {
+        streams: {
+          include: {
+            user: true,
+            category: true,
+          },
+        },
+      },
       skip: 0,
       take: total,
     });

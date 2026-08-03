@@ -29,9 +29,10 @@ model User {
   isDeactivated Boolean   @default(false) @map("is_deactivated")
   deactivateAt  DateTime? @map("deactivate_at")
 
-  tokens      Token[]
-  socialLinks SocialLink[]
-  stream      Stream?
+  tokens       Token[]
+  socialLinks  SocialLink[]
+  stream       Stream?
+  chatMessages ChatMessage[]
 
   @@map("users")
 }
@@ -74,18 +75,37 @@ model Stream {
   title        String
   thumbnailUrl String? @map("thumbnail_url")
 
-  isLive Boolean @default(false) @map("is_live")
+  isLive                     Boolean @default(false) @map("is_live")
+  isChatEnabled              Boolean @default(true) @map("is_chat_enabled")
+  isChatFollowersOnly        Boolean @default(false) @map("is_chat_followers_only")
+  isChatPremiumFollowersOnly Boolean @default(false) @map("is_chat_premium_followers_only")
 
   ingressId String? @unique @map("ingress_id")
   serverUrl String? @map("server_url")
   streamKey String? @map("stream_key")
 
-  user       User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId     String?   @unique @map("user_id")
-  category   Category? @relation(fields: [categoryId], references: [id])
-  categoryId String?   @map("category_id")
+  user         User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String?       @unique @map("user_id")
+  category     Category?     @relation(fields: [categoryId], references: [id])
+  categoryId   String?       @map("category_id")
+  chatMessages ChatMessage[]
 
   @@map("stream")
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  text String
+
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId   String @map("user_id")
+  stream   Stream @relation(fields: [streamId], references: [id], onDelete: Cascade)
+  streamId String @map("stream_id")
+
+  @@map("chat_messages")
 }
 
 model Category {
