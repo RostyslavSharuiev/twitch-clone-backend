@@ -224,7 +224,7 @@ type StreamModel {
 }
 
 type Subscription {
-  chatMessageAdded(streamId: String!): ChatMessageModel!
+  chatMessageAdded: ChatMessageModel!
 }
 
 type TotpModel {

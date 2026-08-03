@@ -39,7 +39,9 @@ export class ProfileService {
     }
 
     const chunks: Buffer[] = [];
-    for await (const chunk of fileUpload.createReadStream()) {
+    const uploadStream = fileUpload.createReadStream() as AsyncIterable<Buffer>;
+
+    for await (const chunk of uploadStream) {
       chunks.push(chunk);
     }
 

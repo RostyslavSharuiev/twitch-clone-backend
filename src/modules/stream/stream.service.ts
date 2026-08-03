@@ -74,7 +74,7 @@ export class StreamService {
       randomIndexList.add(randomIndex);
     }
 
-    const streams = this.prismaService.stream.findMany({
+    const streams = await this.prismaService.stream.findMany({
       skip: 0,
       take: total,
       where: {
@@ -127,7 +127,9 @@ export class StreamService {
     }
 
     const chunks: Buffer[] = [];
-    for await (const chunk of fileUpload.createReadStream()) {
+    const uploadStream = fileUpload.createReadStream() as AsyncIterable<Buffer>;
+
+    for await (const chunk of uploadStream) {
       chunks.push(chunk);
     }
 
