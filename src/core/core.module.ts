@@ -18,6 +18,7 @@ import { FollowModule } from '@/src/modules/follow/follow.module';
 import { LivekitModule } from '@/src/modules/libs/livekit/livekit.module';
 import { MailModule } from '@/src/modules/libs/mail/mail.module';
 import { StorageModule } from '@/src/modules/libs/storage/storage.module';
+import { NotificationModule } from '@/src/modules/notification/notification.module';
 import { IngressModule } from '@/src/modules/stream/ingress/ingress.module';
 import { StreamModule } from '@/src/modules/stream/stream.module';
 import { WebhookModule } from '@/src/modules/webhook/webhook.module';
@@ -65,6 +66,7 @@ import { RedisModule } from './redis/redis.module';
     ChatModule,
     FollowModule,
     ChannelModule,
+    NotificationModule,
   ],
 })
 export class CoreModule {}
