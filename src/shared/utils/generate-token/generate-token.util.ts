@@ -43,7 +43,13 @@ export async function generateToken(
         },
       },
     },
-    include: { user: true },
+    include: {
+      user: {
+        include: {
+          notificationSettings: true,
+        },
+      },
+    },
   });
 
   return newToken;
