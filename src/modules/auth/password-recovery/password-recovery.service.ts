@@ -10,6 +10,7 @@ import { Request } from 'express';
 import { PrismaService } from '@/src/core/prisma/prisma.service';
 import { TokenType } from '@/src/generated/prisma/enums';
 import { MailService } from '@/src/modules/libs/mail/mail.service';
+import { TelegramService } from '@/src/modules/libs/telegram/telegram.service';
 import { generateToken } from '@/src/shared/utils/generate-token/generate-token.util';
 import { getSessionMetadata } from '@/src/shared/utils/session-metadata/session-metadata.util';
 
@@ -20,7 +21,8 @@ import { ResetPasswordInput } from './input/reset-password.input';
 export class PasswordRecoveryService {
   public constructor(
     private readonly prismaService: PrismaService,
-    private readonly mailService: MailService
+    private readonly mailService: MailService,
+    private readonly telegramService: TelegramService
   ) {}
 
   public async resetPassword(
@@ -30,9 +32,18 @@ export class PasswordRecoveryService {
   ) {
     const { email } = input;
 
-    const user = await this.prismaService.user.findUnique({ where: { email } });
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        email,
+      },
+      include: {
+        notificationSettings: true,
+      },
+    });
 
-    if (!user) throw new NotAcceptableException('User not found');
+    if (!user) {
+      throw new NotAcceptableException('User not found');
+    }
 
     const resetToken = await generateToken(
       this.prismaService,
@@ -48,6 +59,17 @@ export class PasswordRecoveryService {
       metadata
     );
 
+    if (
+      resetToken.user?.notificationSettings?.telegramNotifications &&
+      resetToken.user.telegramId
+    ) {
+      await this.telegramService.sendPasswordResetToken(
+        resetToken.user.telegramId,
+        resetToken.token,
+        metadata
+      );
+    }
+
     return true;
   }
 
@@ -61,19 +83,29 @@ export class PasswordRecoveryService {
       },
     });
 
-    if (!existingToken) throw new NotFoundException('Token not found');
+    if (!existingToken) {
+      throw new NotFoundException('Token not found');
+    }
 
     const hasExpired = new Date(existingToken.expiresIn) < new Date();
 
-    if (hasExpired) throw new BadRequestException('Token expires');
+    if (hasExpired) {
+      throw new BadRequestException('Token expires');
+    }
 
     const userId = existingToken.userId;
 
-    if (!userId) throw new NotFoundException('User for token not found');
+    if (!userId) {
+      throw new NotFoundException('User for token not found');
+    }
 
     await this.prismaService.user.update({
-      where: { id: userId },
-      data: { password: await hash(password) },
+      where: {
+        id: userId,
+      },
+      data: {
+        password: await hash(password),
+      },
     });
 
     await this.prismaService.token.delete({
