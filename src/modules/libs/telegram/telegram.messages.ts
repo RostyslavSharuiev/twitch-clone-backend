@@ -1,5 +1,8 @@
-import { User } from '@/src/generated/prisma/client';
+import type { SponsorshipPlan, User } from '@/src/generated/prisma/client';
 import type { SessionMetadata } from '@/src/shared/types/session-metadata.types';
+
+const getCurrentDate = () => new Date().toLocaleDateString();
+const getCurrentTime = () => new Date().toLocaleTimeString();
 
 export const MESSAGES = {
   welcome:
@@ -27,7 +30,7 @@ export const MESSAGES = {
     `You have requested a password reset on the <b>Twitch clone</b> platform .\n\n` +
     `To create a new password, please follow the link below:\n\n` +
     `<b><a href="https://twitchClone.com/password/recovery/${token}">Reset password</a></b>\n\n` +
-    `📅 Request date: <b>${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</b>\n\n` +
+    `📅 Request date: <b>${getCurrentDate()} at ${getCurrentTime()}</b>\n\n` +
     `🖥️ <b>Request Information::</b>\n\n` +
     `🌎 <b>Location:</b> ${metadata.location.country}, ${metadata.location.city}\n` +
     `📱 <b>Operating system:</b> ${metadata.device.os}\n` +
@@ -41,7 +44,7 @@ export const MESSAGES = {
     `You have initiated a request to deactivate your account on the <b>Twitch clone</b> platform.\n\n` +
     `To complete the transaction, please confirm your request by entering the following confirmation code:\n\n` +
     `<b>Confirmation code: ${token}</b>\n\n` +
-    `📅 Request date: <b>${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</b>\n\n` +
+    `📅 Request date: <b>${getCurrentDate()} at ${getCurrentTime()}</b>\n\n` +
     `🖥️ <b>Request Information::</b>\n\n` +
     `🌎 <b>Location:</b> ${metadata.location.country}, ${metadata.location.city}\n` +
     `📱 <b>Operating system:</b> ${metadata.device.os}\n` +
@@ -75,4 +78,12 @@ export const MESSAGES = {
     `<b>You have a new subscriber!</b>\n\n` +
     `This is user <a href="https://twitchClone.com/${follower.username}">${follower.username}</a>\n\n` +
     `The total number of subscribers on your channel is: ${followersCount}`,
+
+  newSponsorship: (plan: SponsorshipPlan, sponsor: User) =>
+    `<b>🚀 New sponsorship!</b>\n\n` +
+    `You have received a new sponsorship for plan <b>${plan.title}</b>.\n` +
+    `💰 Amount: <b>${plan.price} $</b>\n` +
+    `👤 Sponsor: <a href="https://twitchClone.com/${sponsor.username}">${sponsor.displayName}</a>\n` +
+    `📅 Date of issue: <b>${getCurrentDate()} at ${getCurrentTime()}</b>\n\n` +
+    `Thank you for your work and support on the Twitch clone platform!`,
 };
