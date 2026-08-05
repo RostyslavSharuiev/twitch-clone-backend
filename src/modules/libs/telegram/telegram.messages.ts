@@ -86,4 +86,14 @@ export const MESSAGES = {
     `👤 Sponsor: <a href="https://twitchClone.com/${sponsor.username}">${sponsor.displayName}</a>\n` +
     `📅 Date of issue: <b>${getCurrentDate()} at ${getCurrentTime()}</b>\n\n` +
     `Thank you for your work and support on the Twitch clone platform!`,
+
+  enableTwoFactor:
+    `🔒 Ensure your safety!\n\n` +
+    `Enable two-factor authentication in <a href="https://twitchClone.com/dashboard/settings">Account Settings</a>`,
+
+  verifyChannel:
+    `<b>🎉 Congratulations! Your channel has been verified.</b>\n\n` +
+    `We are pleased to announce that your channel is now verified and you have received an official badge.\n\n` +
+    `The verification badge confirms the authenticity of your channel and improves viewer trust.\n\n` +
+    `Thank you for being with us and continuing to grow your channel with Twitch clone!`,
 };

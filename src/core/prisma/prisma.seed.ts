@@ -167,6 +167,12 @@ const main = async () => {
                   ],
                 },
               },
+              notificationSettings: {
+                create: {
+                  siteNotifications: true,
+                  telegramNotifications: true,
+                },
+              },
             },
           });
 
