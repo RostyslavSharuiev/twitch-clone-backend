@@ -18,7 +18,7 @@ export function AccountDeletionTemplate({ domain }: AccountDeletionTemplateProps
       <Tailwind>
         <Body className='max-w-2xl mx-auto p-6 bg-slate-600'>
           <Section className='text-center'>
-            <Heading className='text-3-xl text-black font-bold'>
+            <Heading className='text-3xl text-black font-bold'>
               Your account has been completely deleted
             </Heading>
 

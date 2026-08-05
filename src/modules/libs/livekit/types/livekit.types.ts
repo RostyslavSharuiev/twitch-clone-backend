@@ -9,4 +9,4 @@ export type TypeLiveKitOptions = {
 };
 
 export type TypeLiveKitAsyncOptions = Pick<ModuleMetadata, 'imports'> &
-  Pick<FactoryProvider, 'useFactory' | 'inject'>;
+  Pick<FactoryProvider<TypeLiveKitOptions>, 'useFactory' | 'inject'>;

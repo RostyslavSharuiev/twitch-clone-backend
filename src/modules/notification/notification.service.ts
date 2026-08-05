@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/src/core/prisma/prisma.service';
 import {
   NotificationType,
+  type SponsorshipPlan,
   TokenType,
   type User,
 } from '@/src/generated/prisma/client';
@@ -76,6 +77,53 @@ export class NotificationService {
             id: userId,
           },
         },
+      },
+    });
+  }
+
+  public async createNewSponsorship(
+    userId: string,
+    plan: SponsorshipPlan,
+    sponsor: User
+  ) {
+    return await this.prismaService.notification.create({
+      data: {
+        message: `
+        <b className="font-medium">У вас новый спонсор!</b>
+        <p> User
+          <a href="/${sponsor.username}" className="font-semibold">${sponsor.displayName}</a>
+          became your sponsor by choosing a plan <strong>${plan.title}</strong>.
+        </p>`,
+        type: NotificationType.NEW_SPONSORSHIP,
+        user: {
+          connect: {
+            id: userId,
+          },
+        },
+      },
+    });
+  }
+
+  public async createEnableTwoFactor(userId: string) {
+    return await this.prismaService.notification.create({
+      data: {
+        message: `
+        <b className="font-medium">Ensure your safety</b>
+        <p>Enable two-factor authentication to improve your account security.</p>`,
+        type: NotificationType.ENABLE_TWO_FACTOR,
+        userId,
+      },
+    });
+  }
+
+  public async createVerifyChannel(userId: string) {
+    return await this.prismaService.notification.create({
+      data: {
+        message: `
+        <b className="font-medium">Congratulations!</b>
+        <p> We are pleased to announce that your channel is now verified and you have received an official badge.</p>`,
+        type: NotificationType.VERIFIED_CHANNEL,
+        userId,
       },
     });
   }
