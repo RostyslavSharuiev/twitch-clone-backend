@@ -37,9 +37,13 @@ model User {
   chatMessages         ChatMessage[]
   notifications        Notification[]
   notificationSettings NotificationSettings?
+  transactions         Transaction[]
+  sponsorshipPlans     SponsorshipPlan[]
 
-  followers  Follow[] @relation(name: "followers")
-  followings Follow[] @relation(name: "followings")
+  followers                Follow[]                  @relation(name: "followers")
+  followings               Follow[]                  @relation(name: "followings")
+  sponsorshipSubscriptions SponsorshipSubscription[] @relation(name: "sponsorship_subscriptions")
+  sponsors                 SponsorshipSubscription[] @relation(name: "sponsors")
 
   @@map("users")
 }
@@ -91,11 +95,13 @@ model Stream {
   serverUrl String? @map("server_url")
   streamKey String? @map("stream_key")
 
-  user         User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId       String?       @unique @map("user_id")
-  category     Category?     @relation(fields: [categoryId], references: [id])
-  categoryId   String?       @map("category_id")
   chatMessages ChatMessage[]
+
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String? @unique @map("user_id")
+
+  category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId String?   @map("category_id")
 
   @@map("stream")
 }
@@ -107,8 +113,9 @@ model ChatMessage {
 
   text String
 
-  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId   String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @map("user_id")
+
   stream   Stream @relation(fields: [streamId], references: [id], onDelete: Cascade)
   streamId String @map("stream_id")
 
@@ -135,8 +142,9 @@ model Follow {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  follower    User   @relation(name: "followers", fields: [followerId], references: [id], onDelete: Cascade)
-  followerId  String @map("follower_id")
+  follower   User   @relation(name: "followers", fields: [followerId], references: [id], onDelete: Cascade)
+  followerId String @map("follower_id")
+
   following   User   @relation(name: "followings", fields: [followingId], references: [id], onDelete: Cascade)
   followingId String @map("following_id")
 
@@ -175,6 +183,62 @@ model NotificationSettings {
   @@map("notification_settings")
 }
 
+model Transaction {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  amount   Float
+  currency String
+
+  stripeSubscriptionId String?           @map("stripe_subscription_id")
+  status               TransactionStatus @default(PENDING)
+
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String? @map("user_id")
+
+  @@map("transactions")
+}
+
+model SponsorshipPlan {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  title       String
+  description String?
+  price       Float
+
+  stripeProductId String @map("stripe_product_id")
+  stripePlanId    String @map("stripe_plan_id")
+
+  sponsorshipSubscriptions SponsorshipSubscription[]
+
+  channel   User?   @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  channelId String? @map("channel_id")
+
+  @@map("sponsorship_plans")
+}
+
+model SponsorshipSubscription {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  expiresAt DateTime @map("expires_at")
+
+  plan   SponsorshipPlan? @relation(fields: [planId], references: [id], onDelete: Cascade)
+  planId String?          @map("plan_id")
+
+  user   User?   @relation(name: "sponsorship_subscriptions", fields: [userId], references: [id], onDelete: Cascade)
+  userId String? @map("user_id")
+
+  channel   User?   @relation(name: "sponsors", fields: [channelId], references: [id], onDelete: Cascade)
+  channelId String? @map("channel_id")
+
+  @@map("sponsorship_subscription")
+}
+
 enum TokenType {
   EMAIL_VERIFY
   PASSWORD_RESET
@@ -192,4 +256,13 @@ enum NotificationType {
   VERIFIED_CHANNEL
 
   @@map("notification_types")
+}
+
+enum TransactionStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  EXPIRED
+
+  @@map("transaction_statuses")
 }
